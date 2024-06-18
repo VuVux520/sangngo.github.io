@@ -1,0 +1,170 @@
+HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Delivery Survey</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    fieldset {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+
+    legend {
+      font-weight: bold;
+      padding: 0 5px;
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    form button {
+      display: block;
+      margin: 20px auto;
+      width: auto;
+    }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+<h2>Delivery Experience Survey (2018-2023)</h2>
+<form id="surveyForm">
+  </form>
+
+<button type="button" onclick="submitSurvey()">Submit</button>
+
+<table id="resultsTable"></table>
+<script src="survey_results.js"></script> 
+<script>
+  function createForm() {
+    const form = document.getElementById("surveyForm");
+    const questions = [
+      { question: "Do you live in Ho Chi Minh City from 2018-2023?", options: ["Yes", "No", "Delivery Times"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2018?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2019?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2020?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2021?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2022?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "On average, how many days did it take for your deliveries to arrive in 2023?", options: ["2-3 days", "3-5 days", "5-7 days", "7 days+"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2018?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2019?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2020?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2021?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2022?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "How often did you receive your deliveries on the promised date/time in 2023?", options: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2018?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2019?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2020?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2021?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2022?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+      { question: "Overall, how satisfied were you with the delivery services in 2023?", options: ["Very satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very dissatisfied"] },
+    ]
+
+    questions.forEach((q, index) => {
+      const label = document.createElement("label");
+      label.textContent = `Q${index + 1}. ${q.question}\n`;
+      form.appendChild(label);
+
+      q.options.forEach(option => {
+        const input = document.createElement("input");
+        input.type = (q.question.includes("On average")) ? "radio" : "radio"; // Radio buttons for most questions
+        input.name = `Q${index + 1}`;
+        input.value = option;
+        form.appendChild(input);
+        form.appendChild(document.createTextNode(option + "\n"));
+      });
+    });
+  }
+  function submitSurvey() {
+    const formData = new FormData(document.getElementById("surveyForm"));
+    const results = {};
+    for (let entry of formData.entries()) {
+      results[entry[0]] = entry[1];
+    }
+    localStorage.setItem("surveyResults", JSON.stringify(results));
+    //displayResults(results);
+    displayResultsArray(surveyResults); 
+  }
+
+  function displayResultsArray(resultsArray) {
+  const table = document.getElementById("resultsTable");
+  table.innerHTML = "";
+  const headerRow = table.insertRow();
+  for (let key in resultsArray[0]) {
+    const th = document.createElement("th");
+    th.textContent = key;
+    headerRow.appendChild(th);
+  }
+  resultsArray.forEach(result => {
+    const row = table.insertRow();
+    for (let key in result) {
+      const cell = row.insertCell();
+      cell.textContent = result[key];
+    }
+  });
+}
+
+  function displayResults(results) {
+    const table = document.getElementById("resultsTable");
+    table.innerHTML = "";
+
+    const headerRow = table.insertRow();
+    for (let key in results) {
+      const headerCell = headerRow.insertCell();
+      headerCell.textContent = key;
+    }
+
+    const dataRow = table.insertRow();
+    for (let key in results) {
+      const dataCell = dataRow.insertCell();
+      dataCell.textContent = results[key];
+    }
+  }
+  createForm();
+  const storedResults = JSON.parse(localStorage.getItem("surveyResults"));
+  if (storedResults) {
+    displayResults(storedResults);
+    displayResultsArray(surveyResults);
+  }
+</script>
+
+</body>
+</html>
